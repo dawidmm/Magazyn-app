@@ -6,13 +6,14 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import pl.ekookna.magazynapp.admin.repository.UsersRepository;
 import pl.ekookna.magazynapp.admin.repository.entity.Users;
+import pl.ekookna.magazynapp.admin.service.SecurityUserDetailsService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @AllArgsConstructor
@@ -20,19 +21,16 @@ public class AuthProvider implements AuthenticationProvider {
 
     private SecurityUserDetailsService userDetailsService;
     private PasswordEncoder passwordEncoder;
-    private UsersRepository userRepository;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
-        Optional<Users> user = userRepository.findUserByLogin(username);
+        UserDetails user = userDetailsService.loadUserByUsername(username);
 
-        if (user.isPresent()) {
-            if (passwordEncoder.matches(password, user.get().getPassword())) {
-                return user.map(users -> new UsernamePasswordAuthenticationToken(username, password, List.of(users::getRole))).orElse(null);
-            }
-        }
+        if (passwordEncoder.matches(password, user.getPassword()))
+            return new UsernamePasswordAuthenticationToken(username, password, List.of(() -> ((Users)user).getRole()));
+
         throw new AuthenticationServiceException("Wrong login or password");
     }
 

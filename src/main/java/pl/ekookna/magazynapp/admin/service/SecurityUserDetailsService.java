@@ -1,4 +1,4 @@
-package pl.ekookna.magazynapp.admin.security.config;
+package pl.ekookna.magazynapp.admin.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -26,16 +26,18 @@ public class SecurityUserDetailsService implements UserDetailsService {
 
         if (user.isEmpty())
             throw new UsernameNotFoundException("User not present");
+
         return user.get();
     }
 
     public void createUser(UserDetails user) {
+        ((Users) user).setPassword(encoder.encode(user.getPassword()));
         usersRepository.save((Users) user);
     }
 
     //FIXME: ONLY FOR DEVELOPMENT AND TEST
     @Bean
-    private List<Users> defaultUsers() {
+    private void defaultUsers() {
         var usersList = usersRepository.findAll();
 
         if (usersList.isEmpty()) {
@@ -43,22 +45,18 @@ public class SecurityUserDetailsService implements UserDetailsService {
             userAdmin.setId(1L);
             userAdmin.setActive(true);
             userAdmin.setLogin("admin");
-            userAdmin.setPassword(encoder.encode("admin"));
+            userAdmin.setPassword("admin");
             userAdmin.setRole("ADMIN");
 
             Users user = new Users();
             user.setId(2L);
             user.setActive(true);
             user.setLogin("user");
-            user.setPassword(encoder.encode("user"));
+            user.setPassword("user");
             user.setRole("USER");
 
             createUser(user);
             createUser(userAdmin);
-
-            usersList = usersRepository.findAll();
         }
-
-        return usersList;
     }
 }
