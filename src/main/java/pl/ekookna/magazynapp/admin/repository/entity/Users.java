@@ -5,11 +5,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import pl.ekookna.magazynapp.warehouse.repository.entity.Warehouse;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -18,8 +20,15 @@ import java.util.List;
 public class Users implements UserDetails {
 
     @Id
+    @SequenceGenerator(name = "users_id_sequence",
+            sequenceName = "users_id_sequence",
+            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "users_id_sequence")
+    @Column(updatable = false)
     private Long id;
 
+    @Column(unique = true)
     private String login;
 
     private String password;
@@ -27,6 +36,14 @@ public class Users implements UserDetails {
     private String role;
 
     private Boolean active;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "warehouse_users_ids",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "warehouse_id")}
+    )
+    private Set<Warehouse> warehouses = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
