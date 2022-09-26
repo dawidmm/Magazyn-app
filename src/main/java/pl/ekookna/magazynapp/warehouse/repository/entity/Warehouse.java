@@ -1,5 +1,6 @@
 package pl.ekookna.magazynapp.warehouse.repository.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import pl.ekookna.magazynapp.admin.repository.entity.Users;
@@ -23,6 +24,7 @@ public class Warehouse {
 
     private String warehouseName;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "warehouses", cascade = CascadeType.ALL)
     private Set<Users> users = new HashSet<>();
 }

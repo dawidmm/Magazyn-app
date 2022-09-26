@@ -35,7 +35,8 @@ public class WebSecurityConfig {
                 .antMatchers("/").authenticated()
                 .antMatchers("/user").hasAuthority("ADMIN")
                 .antMatchers("/article").hasAuthority("ADMIN")
-                .antMatchers("/warehouse").hasAuthority("ADMIN");
+                .antMatchers("/warehouse").hasAuthority("ADMIN")
+                .antMatchers("/article/*").authenticated();
 
         return http.build();
     }

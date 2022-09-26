@@ -1,5 +1,6 @@
 package pl.ekookna.magazynapp.warehouse.service;
 
+import pl.ekookna.magazynapp.admin.repository.entity.Users;
 import pl.ekookna.magazynapp.dto.WarehouseDto;
 import pl.ekookna.magazynapp.warehouse.repository.entity.Warehouse;
 
@@ -12,4 +13,6 @@ public interface WarehouseService {
     Optional<Warehouse> findOneByName(String warehouse);
 
     Warehouse save(WarehouseDto warehouse);
+
+    List<Warehouse> findAllForUser(Users user);
 }

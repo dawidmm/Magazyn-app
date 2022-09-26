@@ -25,4 +25,9 @@ public class TemplateController {
     public String getAddWarehousePage() {
         return "warehouse";
     }
+
+    @GetMapping("/article/request")
+    public String getAddArticleToWarehousePage() {
+        return "article_warehouse";
+    }
 }

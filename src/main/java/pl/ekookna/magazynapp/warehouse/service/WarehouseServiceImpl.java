@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -50,5 +51,14 @@ public class WarehouseServiceImpl implements WarehouseService {
         }
 
         return warehouse;
+    }
+
+    @Override
+    public List<Warehouse> findAllForUser(Users user) {
+        return warehouseRepository.findAll()
+                .stream()
+                .filter(f -> f.getUsers()
+                        .contains(user))
+                .collect(Collectors.toList());
     }
 }

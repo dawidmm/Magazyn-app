@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <title>MagazynApp</title>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
 </head>
 <body>
 
@@ -29,30 +30,50 @@
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
 
-            <form th:action="@{/user}" method="post" id="form" name="form">
+            <form th:action="@{/article/request}" method="post" id="form" name="form" enctype="multipart/form-data">
                 <div class="form-group">
-                    <label for="login">Podaj login: </label>
-                    <input type="text" class="form-control" id="login" name="login" placeholder="Podaj login"
+                    <label for="article">Wybierz artykuł: </label>
+                    <select id="article" name="article" class="form-control" required>
+                    </select>
+                </div>
+
+                <script>
+                    $.getJSON('http://localhost:8080/article/all', function (data) {
+                        for (var i = 0; i < data.length; i++) {
+                            var x = document.getElementById("article");
+                            var option = document.createElement("option");
+                            option.text = data[i].name + '[' + data[i].type + ']';
+                            option.value = data[i].id;
+                            x.add(option);
+                        }
+                    });
+                </script>
+
+                <div class="form-group">
+                    <label for="amount">Podaj ilość: </label>
+                    <input type="number" class="form-control" id="amount" name="amount"
+                           placeholder="Podaj ilość"
                            autofocus="autofocus" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Podaj hasło: </label>
-                    <input type="text" class="form-control" id="password" name="password" placeholder="Wpisz hasło"
+                    <label for="vat">Podaj VAT: </label>
+                    <input type="number" class="form-control" id="vat" name="vat"
+                           placeholder="Podaj VAT"
                            autofocus="autofocus" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="role">Rola: </label>
-                    <input type="text" class="form-control" id="role" name="role"
-                           placeholder="Wypisz role (USER, ADMIN):"
+                    <label for="price">Podaj cenę jednostkową: </label>
+                    <input type="number" class="form-control" id="price" name="price"
+                           placeholder="Wpisz cenę jednostkową"
                            autofocus="autofocus" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="warehouse">Magazyn: </label>
-                    <input type="text" class="form-control" id="warehouse" name="warehouse"
-                           placeholder="Wypisz nazwę magazynu:"
+                    <label for="file">Wybierz pliki (max 4): </label>
+                    <input type="file" multiple class="form-control" id="file" name="file"
+                           placeholder="Wybierz plik"
                            autofocus="autofocus">
                 </div>
 
@@ -60,7 +81,7 @@
                     <div class="row">
                         <div class="col-sm-6 col-sm-offset-3">
                             <input type="submit" name="submit" id="submit"
-                                   class="form-control btn btn-success" value="Dodaj użytkownika">
+                                   class="form-control btn btn-success" value="Dodaj artykuł">
                         </div>
                     </div>
                 </div>
@@ -70,7 +91,6 @@
         </div>
     </div>
 </div>
-
 
 </body>
 </html>

@@ -3,7 +3,7 @@ create sequence "seq_warehouse_id" start 1;
 create table warehouse
 (
     id             BIGINT PRIMARY KEY DEFAULT nextval('seq_warehouse_id'),
-    warehouse_name TEXT NOT NULL
+    warehouse_name TEXT NOT NULL UNIQUE
 );
 
 create table warehouse_users_ids

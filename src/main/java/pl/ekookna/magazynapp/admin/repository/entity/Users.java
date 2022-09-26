@@ -1,5 +1,6 @@
 package pl.ekookna.magazynapp.admin.repository.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -37,6 +38,7 @@ public class Users implements UserDetails {
 
     private Boolean active;
 
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "warehouse_users_ids",
