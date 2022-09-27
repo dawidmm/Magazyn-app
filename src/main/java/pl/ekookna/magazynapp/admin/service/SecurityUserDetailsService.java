@@ -63,10 +63,6 @@ public class SecurityUserDetailsService implements UserDetailsService {
         createUser(user);
     }
 
-    public Optional<Users> findUserByLogin(String username) {
-        return usersRepository.findUserByLogin(username);
-    }
-
     //FIXME: ONLY FOR DEVELOPMENT AND TEST
     @Bean
     private void defaultUsers() {
