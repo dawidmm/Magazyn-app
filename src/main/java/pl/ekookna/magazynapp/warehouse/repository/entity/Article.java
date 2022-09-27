@@ -1,9 +1,12 @@
 package pl.ekookna.magazynapp.warehouse.repository.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,4 +23,8 @@ public class Article {
     private Long id;
     private String name;
     private String type;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "article", targetEntity = ArticleStock.class, cascade = CascadeType.ALL)
+    private List<ArticleStock> articleStockList = new ArrayList<>();
 }

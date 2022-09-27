@@ -2,10 +2,9 @@ package pl.ekookna.magazynapp.warehouse.repository.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Type;
+import pl.ekookna.magazynapp.utils.StringListConverter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,7 +21,9 @@ public class ArticleStock {
             generator = "article_stock_id_seq")
     private Long id;
 
-    private Long articleId;
+    @ManyToOne(targetEntity = Article.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "article_id", referencedColumnName = "id")
+    private Article article;
 
     private Long amount;
 
@@ -30,6 +31,7 @@ public class ArticleStock {
 
     private int price;
 
-    @Type(type = "jsonb")
-    private List<String> files = new ArrayList<>();
+    @Convert(converter = StringListConverter.class)
+    @Column(name = "files", columnDefinition = "text")
+    private List<String> files;
 }

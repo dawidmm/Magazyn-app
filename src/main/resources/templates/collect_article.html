@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
     <title>MagazynApp</title>
 </head>
 <body>
@@ -30,17 +31,29 @@
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
 
-            <form th:action="@{/warehouse}" method="post" id="form" name="form">
+            <form th:action="@{/article/release}" method="post" id="form" name="form">
                 <div class="form-group">
-                    <label for="name">Podaj nazwę magazynu: </label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Podaj nazwę magazynu ..."
-                           autofocus="autofocus" required>
+                    <label for="id">Wybierz artykuł: </label>
+                    <select id="id" name="id" class="form-control" required>
+                    </select>
                 </div>
 
+                <script>
+                    $.getJSON('http://localhost:8080/article/stock/all', function (data) {
+                        for (var i = 0; i < data.length; i++) {
+                            var x = document.getElementById("id");
+                            var option = document.createElement("option");
+                            option.text = data[i].article.name + '[' + data[i].article.type + ']';
+                            option.value = data[i].id;
+                            x.add(option);
+                        }
+                    });
+                </script>
+
                 <div class="form-group">
-                    <label for="user">Podaj podaj nazwę użytkownika: </label>
-                    <input type="text" class="form-control" id="user" name="user"
-                           placeholder="Wpisz nazwę użytkownika, którego chcesz dodać do magazynu"
+                    <label for="amount">Podaj ilość: </label>
+                    <input type="number" class="form-control" id="amount" name="amount"
+                           placeholder="Podaj ilość"
                            autofocus="autofocus" required>
                 </div>
 
@@ -48,7 +61,7 @@
                     <div class="row">
                         <div class="col-sm-6 col-sm-offset-3">
                             <input type="submit" name="submit" id="submit"
-                                   class="form-control btn btn-success" value="Dodaj magazyn">
+                                   class="form-control btn btn-success" value="Wydaj artykuł">
                         </div>
                     </div>
                 </div>
@@ -58,5 +71,6 @@
         </div>
     </div>
 </div>
+
 </body>
 </html>

@@ -1,6 +1,7 @@
 package pl.ekookna.magazynapp.warehouse.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import pl.ekookna.magazynapp.admin.repository.UsersRepository;
 import pl.ekookna.magazynapp.admin.repository.entity.Users;
@@ -47,7 +48,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 
             user.setWarehouses(set);
         } else {
-            throw new IllegalArgumentException("User is not present: " + warehouseDto.getUser());
+            throw new UsernameNotFoundException("User is not present: " + warehouseDto.getUser());
         }
 
         return warehouse;

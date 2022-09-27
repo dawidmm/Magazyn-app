@@ -9,5 +9,7 @@ public interface ArticleService {
 
     void save(ArticleDto articleDto);
 
+    Article getOne(long id);
+
     List<Article> findAll();
 }

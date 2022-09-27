@@ -47,7 +47,7 @@ public class SecurityUserDetailsService implements UserDetailsService {
             throw new UserExistException("Username already exist");
     }
 
-    public void createUser(UserDto userDto) throws UserExistException {
+    public void createUser(UserDto userDto) {
         UserDetails user = userDto.toUserDetails();
         var optWarehouse = warehouseRepository.findOneByWarehouseName(userDto.getWarehouse());
         optWarehouse.ifPresent(warehouse -> ((Users) user).setWarehouses(Set.of(warehouse)));
@@ -60,7 +60,7 @@ public class SecurityUserDetailsService implements UserDetailsService {
 
     //FIXME: ONLY FOR DEVELOPMENT AND TEST
     @Bean
-    private void defaultUsers() throws UserExistException {
+    private void defaultUsers() {
         var usersList = usersRepository.findAll();
 
         if (usersList.isEmpty()) {

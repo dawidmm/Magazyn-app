@@ -30,4 +30,9 @@ public class TemplateController {
     public String getAddArticleToWarehousePage() {
         return "article_warehouse";
     }
+
+    @GetMapping("/article/release")
+    public String getCollectArticleFromWarehousePage() {
+        return "collect_article";
+    }
 }
