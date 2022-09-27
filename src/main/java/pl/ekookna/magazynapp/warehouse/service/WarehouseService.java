@@ -12,6 +12,10 @@ public interface WarehouseService {
 
     Optional<Warehouse> findOneByName(String warehouse);
 
+    Optional<Warehouse> findOneById(long id);
+
+    Warehouse getOneById(long id);
+
     Warehouse save(WarehouseDto warehouse);
 
     List<Warehouse> findAllForUser(Users user);

@@ -31,7 +31,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @org.springframework.web.bind.annotation.RestController
 @Validated
@@ -88,13 +87,16 @@ public class RestController implements RestApi {
     @PostMapping(value = "/article/request", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addArticleToWarehouse(@Size(max = 4) @RequestPart("file") List<MultipartFile> multipartFiles,
                                                         @Min(0) @RequestParam("article") long articleId,
+                                                        @Min(0) @RequestParam("warehouse") long warehouseId,
                                                         @Min(0) @RequestParam("amount") long amount,
                                                         @Min(0) @RequestParam("vat") int vat,
                                                         @Min(0) @RequestParam("price") int price) {
         Article article = articleService.getOne(articleId);
+        Warehouse warehouse = warehouseService.getOneById(warehouseId);
 
         ArticleStock articleStock = new ArticleStock();
         articleStock.setArticle(article);
+        articleStock.getWarehouse().add(warehouse);
         articleStock.setAmount(amount);
         articleStock.setVat(vat);
         articleStock.setPrice(price);
@@ -126,9 +128,7 @@ public class RestController implements RestApi {
     @Override
     @GetMapping("/warehouse/all")
     public ResponseEntity<Collection<Warehouse>> getAllWarehouseForLoggedUser(Authentication authentication) {
-        String username = (String) authentication.getPrincipal();
-        Users user = (Users) userDetailsService.loadUserByUsername(username);
-
+        Users user = getLoggedUser(authentication);
         ResponseEntity<Collection<Warehouse>> response;
 
         if (user.getRole().equals(ADMIN)) {
@@ -142,14 +142,20 @@ public class RestController implements RestApi {
 
     @Override
     @GetMapping("/article/stock/all")
-    public ResponseEntity<List<ArticleStock>> getAllArticleStock() {
+    public ResponseEntity<Collection<ArticleStock>> getAllArticleStock(Authentication authentication) {
+        Users user = getLoggedUser(authentication);
+        ResponseEntity<Collection<ArticleStock>> response;
 
-        try {
-            return new ResponseEntity<>(articleStockService.findAll(), HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        if (user.getRole().equals(ADMIN)) {
+            response = new ResponseEntity<>(articleStockService.findAll(), HttpStatus.OK);
+        } else {
+            response = new ResponseEntity<>(articleStockService.findAllForUser(user), HttpStatus.OK);
         }
+
+        return response;
+    }
+
+    private Users getLoggedUser(Authentication authentication) {
+        return (Users) userDetailsService.loadUserByUsername((String) authentication.getPrincipal());
     }
 }

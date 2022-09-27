@@ -25,6 +25,6 @@ public class Article {
     private String type;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "article", targetEntity = ArticleStock.class, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "article", targetEntity = ArticleStock.class)
     private List<ArticleStock> articleStockList = new ArrayList<>();
 }

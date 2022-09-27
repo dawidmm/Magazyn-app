@@ -37,6 +37,7 @@ public interface RestApi {
     @PostMapping(value = "/article/request", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<String> addArticleToWarehouse(@Size(max = 4) @RequestPart("file") List<MultipartFile> multipartFiles,
                                                  @Min(0) @RequestParam("article") long articleId,
+                                                 @Min(0) @RequestParam("warehouse") long warehouseId,
                                                  @Min(0) @RequestParam("amount") long amount,
                                                  @Min(0) @RequestParam("vat") int vat,
                                                  @Min(0) @RequestParam("price") int price);
@@ -51,5 +52,5 @@ public interface RestApi {
     ResponseEntity<Collection<Warehouse>> getAllWarehouseForLoggedUser(Authentication authentication);
 
     @GetMapping("/article/stock/all")
-    ResponseEntity<List<ArticleStock>> getAllArticleStock();
+    ResponseEntity<Collection<ArticleStock>> getAllArticleStock(Authentication authentication);
 }

@@ -38,12 +38,28 @@
                     </select>
                 </div>
 
+                <div class="form-group">
+                    <label for="warehouse">Wybierz magazyn: </label>
+                    <select id="warehouse" name="warehouse" class="form-control" required>
+                    </select>
+                </div>
+
                 <script>
                     $.getJSON('http://localhost:8080/article/all', function (data) {
                         for (var i = 0; i < data.length; i++) {
                             var x = document.getElementById("article");
                             var option = document.createElement("option");
                             option.text = data[i].name + '[' + data[i].type + ']';
+                            option.value = data[i].id;
+                            x.add(option);
+                        }
+                    });
+
+                    $.getJSON('http://localhost:8080/warehouse/all', function (data) {
+                        for (var i = 0; i < data.length; i++) {
+                            var x = document.getElementById("warehouse");
+                            var option = document.createElement("option");
+                            option.text = data[i].warehouseName;
                             option.value = data[i].id;
                             x.add(option);
                         }

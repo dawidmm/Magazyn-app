@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import pl.ekookna.magazynapp.admin.repository.UsersRepository;
 import pl.ekookna.magazynapp.admin.repository.entity.Users;
 import pl.ekookna.magazynapp.dto.WarehouseDto;
+import pl.ekookna.magazynapp.warehouse.exception.WarehouseNotFoundException;
 import pl.ekookna.magazynapp.warehouse.repository.WarehouseRepository;
 import pl.ekookna.magazynapp.warehouse.repository.entity.Warehouse;
 
@@ -31,6 +32,20 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     public Optional<Warehouse> findOneByName(String warehouse) {
         return warehouseRepository.findOneByWarehouseName(warehouse);
+    }
+
+    @Override
+    public Optional<Warehouse> findOneById(long id) {
+        return warehouseRepository.findById(id);
+    }
+
+    @Override
+    public Warehouse getOneById(long id) {
+        var optWarehouse = findOneById(id);
+
+        if (optWarehouse.isPresent())
+            return optWarehouse.get();
+        throw new WarehouseNotFoundException("Warehouse with id not found: " + id);
     }
 
     @Override

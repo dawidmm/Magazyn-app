@@ -3,12 +3,14 @@ package pl.ekookna.magazynapp.warehouse.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import pl.ekookna.magazynapp.admin.repository.entity.Users;
 import pl.ekookna.magazynapp.dto.ArticleStockDto;
 import pl.ekookna.magazynapp.warehouse.exception.AmountTooLargeException;
 import pl.ekookna.magazynapp.warehouse.exception.ArticleStockNotFoundException;
 import pl.ekookna.magazynapp.warehouse.repository.ArticleStockRepository;
 import pl.ekookna.magazynapp.warehouse.repository.entity.Article;
 import pl.ekookna.magazynapp.warehouse.repository.entity.ArticleStock;
+import pl.ekookna.magazynapp.warehouse.repository.entity.Warehouse;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -16,16 +18,14 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
 public class ArticleStockServiceImpl implements ArticleStockService {
 
     private ArticleStockRepository articleStockRepository;
-    private ArticleService articleService;
+    private WarehouseService warehouseService;
 
     @Override
     @Transactional
@@ -61,7 +61,10 @@ public class ArticleStockServiceImpl implements ArticleStockService {
 
         articleStock.setAmount(currentAmount - amount);
 
-        articleStockRepository.saveAndFlush(articleStock);
+        if (articleStock.getAmount() == 0)
+            articleStockRepository.delete(articleStock);
+        else
+            articleStockRepository.saveAndFlush(articleStock);
     }
 
     @Override
@@ -100,6 +103,18 @@ public class ArticleStockServiceImpl implements ArticleStockService {
         }
 
         return articleList;
+    }
+
+    @Override
+    public Set<ArticleStock> findAllForUser(Users user) {
+        List<Warehouse> warehouseList = warehouseService.findAllForUser(user);
+        Set<ArticleStock> articleStockList = new HashSet<>();
+
+        for (Warehouse w : warehouseList) {
+            articleStockList.addAll(w.getArticleStocks());
+        }
+
+        return articleStockList;
     }
 
     private void storeFile(MultipartFile file, String path) {

@@ -39,7 +39,7 @@ public class Users implements UserDetails {
     private Boolean active;
 
     @JsonIgnore
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany()
     @JoinTable(
             name = "warehouse_users_ids",
             joinColumns = {@JoinColumn(name = "user_id")},

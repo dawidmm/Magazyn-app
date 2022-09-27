@@ -1,10 +1,12 @@
 package pl.ekookna.magazynapp.warehouse.repository.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import pl.ekookna.magazynapp.utils.StringListConverter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,9 +23,18 @@ public class ArticleStock {
             generator = "article_stock_id_seq")
     private Long id;
 
-    @ManyToOne(targetEntity = Article.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = Article.class)
     @JoinColumn(name = "article_id", referencedColumnName = "id")
     private Article article;
+
+    @JsonIgnore
+    @ManyToMany()
+    @JoinTable(
+            name = "article_stock_warehouses_ids",
+            joinColumns = {@JoinColumn(name = "article_stock_id")},
+            inverseJoinColumns = {@JoinColumn(name = "warehouse_id")}
+    )
+    private List<Warehouse> warehouse = new ArrayList<>();
 
     private Long amount;
 

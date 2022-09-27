@@ -10,3 +10,11 @@ create table article_stock
     files      TEXT   NULL,
     CONSTRAINT article_id_fk FOREIGN KEY (article_id) REFERENCES article
 );
+
+create table article_stock_warehouses_ids
+(
+    article_stock_id BIGINT NOT NULL,
+    warehouse_id     BIGINT NOT NULL,
+    CONSTRAINT article_stock_fk FOREIGN KEY (article_stock_id) REFERENCES article_stock,
+    CONSTRAINT warehouse_id_fk FOREIGN KEY (warehouse_id) REFERENCES warehouse
+);

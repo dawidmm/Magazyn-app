@@ -6,7 +6,9 @@ import lombok.Setter;
 import pl.ekookna.magazynapp.admin.repository.entity.Users;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -25,6 +27,10 @@ public class Warehouse {
     private String warehouseName;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "warehouses", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "warehouses")
     private Set<Users> users = new HashSet<>();
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "warehouse")
+    private List<ArticleStock> articleStocks = new ArrayList<>();
 }
