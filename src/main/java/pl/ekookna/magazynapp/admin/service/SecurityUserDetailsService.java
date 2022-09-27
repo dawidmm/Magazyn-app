@@ -11,6 +11,7 @@ import pl.ekookna.magazynapp.admin.exception.UserExistException;
 import pl.ekookna.magazynapp.admin.repository.UsersRepository;
 import pl.ekookna.magazynapp.admin.repository.entity.Users;
 import pl.ekookna.magazynapp.dto.UserDto;
+import pl.ekookna.magazynapp.warehouse.exception.WarehouseNotFoundException;
 import pl.ekookna.magazynapp.warehouse.repository.WarehouseRepository;
 
 import java.util.Optional;
@@ -50,7 +51,15 @@ public class SecurityUserDetailsService implements UserDetailsService {
     public void createUser(UserDto userDto) {
         UserDetails user = userDto.toUserDetails();
         var optWarehouse = warehouseRepository.findOneByWarehouseName(userDto.getWarehouse());
-        optWarehouse.ifPresent(warehouse -> ((Users) user).setWarehouses(Set.of(warehouse)));
+
+        if (userDto.getWarehouse() != null && !userDto.getWarehouse().isBlank()) {
+            if (optWarehouse.isPresent()) {
+                ((Users) user).setWarehouses(Set.of(optWarehouse.get()));
+            } else {
+                throw new WarehouseNotFoundException("Warehouse not found: " + userDto.getWarehouse());
+            }
+        }
+
         createUser(user);
     }
 

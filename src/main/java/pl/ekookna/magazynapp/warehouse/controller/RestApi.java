@@ -19,6 +19,7 @@ import pl.ekookna.magazynapp.warehouse.repository.entity.Warehouse;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public interface RestApi {
     ResponseEntity<String> saveArticle(@Valid @NotNull ArticleDto articleDto);
 
     @PostMapping(value = "/article/request", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<String> addArticleToWarehouse(@RequestPart("file") List<MultipartFile> multipartFiles,
+    ResponseEntity<String> addArticleToWarehouse(@Size(max = 4) @RequestPart("file") List<MultipartFile> multipartFiles,
                                                  @Min(0) @RequestParam("article") long articleId,
                                                  @Min(0) @RequestParam("amount") long amount,
                                                  @Min(0) @RequestParam("vat") int vat,

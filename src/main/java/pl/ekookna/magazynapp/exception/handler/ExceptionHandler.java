@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import pl.ekookna.magazynapp.warehouse.exception.AmountTooLargeException;
 import pl.ekookna.magazynapp.warehouse.exception.ArticleExistException;
 import pl.ekookna.magazynapp.warehouse.exception.ArticleStockNotFoundException;
+import pl.ekookna.magazynapp.warehouse.exception.WarehouseNotFoundException;
 
 import javax.validation.ConstraintViolationException;
 
@@ -23,6 +24,12 @@ public class ExceptionHandler {
     @ResponseBody
     @org.springframework.web.bind.annotation.ExceptionHandler(ArticleStockNotFoundException.class)
     public ResponseEntity<String> articleStockNotFound(ArticleStockNotFoundException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseBody
+    @org.springframework.web.bind.annotation.ExceptionHandler(WarehouseNotFoundException.class)
+    public ResponseEntity<String> warehouseNotFound(WarehouseNotFoundException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 

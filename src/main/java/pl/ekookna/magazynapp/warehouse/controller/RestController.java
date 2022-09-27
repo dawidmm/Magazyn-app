@@ -28,6 +28,7 @@ import pl.ekookna.magazynapp.warehouse.service.WarehouseService;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -85,14 +86,11 @@ public class RestController implements RestApi {
     //FIXME WYSYŁAĆ JSON'A Z FRONTU W MULTIPARCIE ZAMIAST PARAMETROW
     @Override
     @PostMapping(value = "/article/request", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> addArticleToWarehouse(@RequestPart("file") List<MultipartFile> multipartFiles,
+    public ResponseEntity<String> addArticleToWarehouse(@Size(max = 4) @RequestPart("file") List<MultipartFile> multipartFiles,
                                                         @Min(0) @RequestParam("article") long articleId,
                                                         @Min(0) @RequestParam("amount") long amount,
                                                         @Min(0) @RequestParam("vat") int vat,
                                                         @Min(0) @RequestParam("price") int price) {
-        if (multipartFiles.size() > 4)
-            return new ResponseEntity<>("Files size is more than 4: " + multipartFiles.size(), HttpStatus.BAD_REQUEST);
-
         Article article = articleService.getOne(articleId);
 
         ArticleStock articleStock = new ArticleStock();
