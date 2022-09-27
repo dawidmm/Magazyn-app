@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,12 +26,14 @@ import pl.ekookna.magazynapp.warehouse.service.ArticleService;
 import pl.ekookna.magazynapp.warehouse.service.ArticleStockService;
 import pl.ekookna.magazynapp.warehouse.service.WarehouseService;
 
+import javax.security.sasl.AuthenticationException;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @org.springframework.web.bind.annotation.RestController
 @Validated
@@ -94,6 +97,12 @@ public class RestController implements RestApi {
         Article article = articleService.getOne(articleId);
         Warehouse warehouse = warehouseService.getOneById(warehouseId);
 
+        try {
+            checkAuthenticationToWarehouse(warehouse);
+        } catch (AuthenticationException e) {
+            return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.FORBIDDEN);
+        }
+
         ArticleStock articleStock = new ArticleStock();
         articleStock.setArticle(article);
         articleStock.getWarehouse().add(warehouse);
@@ -111,12 +120,40 @@ public class RestController implements RestApi {
         }
     }
 
+    private void checkAuthenticationToWarehouse(Warehouse warehouse) throws AuthenticationException {
+        Users user = getLoggedUser();
+
+        if (!user.getRole().equals(ADMIN)) {
+            if (!user.getWarehouses().contains(warehouse))
+                throw new AuthenticationException();
+        }
+    }
+
     @Override
     @PostMapping(value = "/article/release", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> collectArticle(@Valid ArticleStockDto articleStockDto) {
+
+        try {
+            checkAuthenticationToActicleStock(articleStockDto);
+        } catch (AuthenticationException e) {
+            return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.FORBIDDEN);
+        }
+
         articleStockService.removeArticleStockAmount(articleStockDto);
 
         return new ResponseEntity<>("DONE", HttpStatus.OK);
+    }
+
+    private void checkAuthenticationToActicleStock(ArticleStockDto articleStockDto) throws AuthenticationException {
+        if (!getLoggedUser().getRole().equals(ADMIN)) {
+            var list = articleStockService.findAllForUser(getLoggedUser())
+                    .stream()
+                    .filter(f -> f.getId().equals(articleStockDto.getId()))
+                    .collect(Collectors.toList());
+
+            if (!list.contains(articleStockService.getOne(articleStockDto.getId())))
+                throw new AuthenticationException();
+        }
     }
 
     @Override
@@ -127,8 +164,8 @@ public class RestController implements RestApi {
 
     @Override
     @GetMapping("/warehouse/all")
-    public ResponseEntity<Collection<Warehouse>> getAllWarehouseForLoggedUser(Authentication authentication) {
-        Users user = getLoggedUser(authentication);
+    public ResponseEntity<Collection<Warehouse>> getAllWarehouseForLoggedUser() {
+        Users user = getLoggedUser();
         ResponseEntity<Collection<Warehouse>> response;
 
         if (user.getRole().equals(ADMIN)) {
@@ -142,8 +179,8 @@ public class RestController implements RestApi {
 
     @Override
     @GetMapping("/article/stock/all")
-    public ResponseEntity<Collection<ArticleStock>> getAllArticleStock(Authentication authentication) {
-        Users user = getLoggedUser(authentication);
+    public ResponseEntity<Collection<ArticleStock>> getAllArticleStock() {
+        Users user = getLoggedUser();
         ResponseEntity<Collection<ArticleStock>> response;
 
         if (user.getRole().equals(ADMIN)) {
@@ -155,7 +192,8 @@ public class RestController implements RestApi {
         return response;
     }
 
-    private Users getLoggedUser(Authentication authentication) {
+    private Users getLoggedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (Users) userDetailsService.loadUserByUsername((String) authentication.getPrincipal());
     }
 }

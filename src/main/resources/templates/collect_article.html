@@ -43,7 +43,7 @@
                         for (var i = 0; i < data.length; i++) {
                             var x = document.getElementById("id");
                             var option = document.createElement("option");
-                            option.text = data[i].article.name + '[' + data[i].article.type + ']' + '\t Ilość: ' + data[i].amount;
+                            option.text = data[i].article.name + '[' + data[i].article.type + ']' + ' Ilość: ' + data[i].amount + ' Vat: ' + data[i].vat + ' Cena: ' + data[i].price;
                             option.value = data[i].id;
                             x.add(option);
                         }

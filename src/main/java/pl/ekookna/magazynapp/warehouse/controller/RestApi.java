@@ -2,7 +2,6 @@ package pl.ekookna.magazynapp.warehouse.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,8 +48,8 @@ public interface RestApi {
     ResponseEntity<List<Article>> getAllArticle();
 
     @GetMapping("/warehouse/all")
-    ResponseEntity<Collection<Warehouse>> getAllWarehouseForLoggedUser(Authentication authentication);
+    ResponseEntity<Collection<Warehouse>> getAllWarehouseForLoggedUser();
 
     @GetMapping("/article/stock/all")
-    ResponseEntity<Collection<ArticleStock>> getAllArticleStock(Authentication authentication);
+    ResponseEntity<Collection<ArticleStock>> getAllArticleStock();
 }
