@@ -1,4 +1,5 @@
 MagazynApp
+Aplikacja internetowa do zarządzania magazynem
 
 DB:
  - PostgresSQL
